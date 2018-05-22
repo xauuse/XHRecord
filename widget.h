@@ -8,6 +8,7 @@
 #include "QTextStream"
 #include <QVector>
 #include <QSet>
+#include <QListWidgetItem>
 
 namespace Ui {
 class Widget;
@@ -42,6 +43,7 @@ private:
 private slots:
    bool eventFilter(QObject *watched, QEvent *event);
    void checkTextLength(QString text);
+   void deleteItemsSlot(QListWidgetItem *item);
 };
 
 #endif // WIDGET_H

@@ -1,6 +1,6 @@
 #include "widget.h"
 #include "ui_widget.h"
-
+#include "QDebug"
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -12,6 +12,7 @@ Widget::Widget(QWidget *parent) :
     ui->changeLEdit->installEventFilter(this);
     ui->addBatchPBtn->installEventFilter(this);
     connect(ui->changeLEdit,SIGNAL(textChanged(QString)),this,SLOT(checkTextLength(QString)));
+    connect(ui->listWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(deleteItemsSlot(QListWidgetItem*)));
 
 }
 
@@ -38,6 +39,8 @@ void Widget::on_addOnePBtn_clicked()
 
 
 }
+
+
 /**
  * @brief 批量处理按钮的方法
  */
@@ -143,6 +146,8 @@ void Widget::loadFileInList(QString filePath)
          line = in.readLine().trimmed();
 
      }
+     ui->listWidget->setCurrentRow(ui->listWidget->count()-1);
+
 }
 /**
  * @brief 用于检查是否文件内已有重复数据
@@ -210,6 +215,42 @@ void Widget::checkTextLength(QString text)
     if(changeLen == currentLen){
         focusNextChild();
     }
+}
+
+void Widget::deleteItemsSlot(QListWidgetItem *item)
+{
+
+//    QMessageBox msgBox;
+//    msgBox.setText("The file has been modified.");
+//    msgBox.setInformativeText("确定删除此数据吗?");
+//    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+//    msgBox.setDefaultButton(QMessageBox::Yes);
+    int ret = QMessageBox::warning(this, tr("XHRecord"),
+                                     tr("The filr has been modified.\n"
+                                        "你确定要删除此数据吗?"),
+                                     QMessageBox::Yes
+                                     | QMessageBox::No,
+                                     QMessageBox::Yes);
+ //   int ret = msgBox.exec();
+    if(ret == QMessageBox::Yes){
+        delete ui->listWidget->takeItem(ui->listWidget->row(item));
+        QString filePath = ui->filePathLEdit->text();
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+            return;
+        QTextStream out(&file);
+        for(int i = 0;i<ui->listWidget->count();i++){
+            QString mtext = ui->listWidget->item(i)->text();
+            out<<mtext<<"\n";
+        }
+        out.flush();
+        file.close();
+        loadFileInList(filePath);
+    }
+    else if (ret == QMessageBox::No) {
+        return ;
+    }
+
 }
 
 
