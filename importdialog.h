@@ -17,6 +17,12 @@ public:
 
 private:
     Ui::ImportDialog *ui;
+signals:
+    void sendData(int quantitly,QString filePath);
+private slots:
+    void on_pushButton_clicked();
+    void on_openPBtn_clicked();
+    void on_pushButton_2_clicked();
 };
 
 #endif // IMPORTDIALOG_H

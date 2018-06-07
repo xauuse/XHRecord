@@ -13,8 +13,15 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        widget.cpp
+        widget.cpp \
+    importdialog.cpp \
+    fileutil.cpp
 
-HEADERS  += widget.h
+HEADERS  += widget.h \
+    importdialog.h \
+    fileutil.h
 
-FORMS    += widget.ui
+FORMS    += widget.ui \
+    importdialog.ui
+
+RC_ICONS = mPic.ico
